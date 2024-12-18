@@ -1,0 +1,907 @@
+# Generated with Microsoft365DSC version 1.24.717.1
+# For additional information on how to use Microsoft365DSC, please visit https://aka.ms/M365DSC
+param (
+    [parameter(Mandatory)]
+    [System.String]
+    $ConditionalExclude,
+    [parameter(Mandatory)]
+    [System.String]
+    $PrivUsers,
+    [parameter(Mandatory)]
+    [System.String]
+    $TermsOfUse
+)
+
+Configuration M365TenantConfig
+{
+    param (
+        [parameter()]
+        [System.String]
+        $ConditionalExclude,
+        [parameter()]
+        [System.String]
+        $PrivUsers,
+        [parameter()]
+        [System.String]
+        $TermsOfUse
+    )
+
+    $OrganizationName = $ConfigurationData.NonNodeData.OrganizationName
+
+    Import-DscResource -ModuleName 'Microsoft365DSC' -ModuleVersion '1.24.717.1'
+
+    Node localhost
+    {
+        AADAuthenticationContextClassReference "AADAuthenticationContextClassReference-c1"
+        {
+            ApplicationId         = $ConfigurationData.NonNodeData.ApplicationId;
+            CertificateThumbprint = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            Description           = "";
+            DisplayName           = "PROTECTED information";
+            Ensure                = "Present";
+            Id                    = "c1";
+            IsAvailable           = $True;
+            TenantId              = $OrganizationName;
+        }
+        AADAuthorizationPolicy "AADAuthorizationPolicy"
+        {
+            AllowedToSignUpEmailBasedSubscriptions                  = $True;
+            AllowedToUseSSPR                                        = $True;
+            AllowEmailVerifiedUsersToJoinOrganization               = $True;
+            AllowInvitesFrom                                        = "none";
+            ApplicationId                                           = $ConfigurationData.NonNodeData.ApplicationId;
+            BlockMsolPowerShell                                     = $False;
+            CertificateThumbprint                                   = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            DefaultUserRoleAllowedToCreateApps                      = $False;
+            DefaultUserRoleAllowedToCreateSecurityGroups            = $False;
+            DefaultUserRoleAllowedToCreateTenants                   = $False;
+            DefaultUserRoleAllowedToReadBitlockerKeysForOwnedDevice = $True;
+            DefaultUserRoleAllowedToReadOtherUsers                  = $True;
+            Description                                             = "Used to manage authorization related settings across the company.";
+            DisplayName                                             = "Authorization Policy";
+            Ensure                                                  = "Present";
+            GuestUserRole                                           = "RestrictedGuest";
+            IsSingleInstance                                        = "Yes";
+            PermissionGrantPolicyIdsAssignedToDefaultUserRole       = @("ManagePermissionGrantsForOwnedResource.microsoft-dynamically-managed-permissions-for-chat","ManagePermissionGrantsForOwnedResource.microsoft-dynamically-managed-permissions-for-team");
+            TenantId                                                = $OrganizationName;
+        }
+        AADConditionalAccessPolicy "AADConditionalAccessPolicy-DEV - B - Block unapproved devices"
+        {
+            ApplicationEnforcedRestrictionsIsEnabled = $False;
+            ApplicationId                            = $ConfigurationData.NonNodeData.ApplicationId;
+            AuthenticationContexts                   = @();
+            BuiltInControls                          = @("block");
+            CertificateThumbprint                    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            ClientAppTypes                           = @("all");
+            CloudAppSecurityIsEnabled                = $False;
+            CloudAppSecurityType                     = "";
+            CustomAuthenticationFactors              = @();
+            DeviceFilterRule                         = "";
+            DisplayName                              = "DEV - B - Block unapproved devices";
+            Ensure                                   = "Present";
+            ExcludeApplications                      = @();
+            ExcludeExternalTenantsMembers            = @();
+            ExcludeExternalTenantsMembershipKind     = "";
+            ExcludeGroups                            = @($ConditionalExclude);
+            ExcludeLocations                         = @();
+            ExcludePlatforms                         = @();
+            ExcludeRoles                             = @();
+            ExcludeUsers                             = @();
+            GrantControlOperator                     = "OR";
+            Id                                       = "f3d11622-6e28-4736-bd82-04b1727cee96";
+            IncludeApplications                      = @("All");
+            IncludeExternalTenantsMembers            = @();
+            IncludeExternalTenantsMembershipKind     = "";
+            IncludeGroups                            = @();
+            IncludeLocations                         = @();
+            IncludePlatforms                         = @("android","windowsPhone","macOS","linux");
+            IncludeRoles                             = @();
+            IncludeUserActions                       = @();
+            IncludeUsers                             = @("All");
+            PersistentBrowserIsEnabled               = $False;
+            PersistentBrowserMode                    = "";
+            SignInFrequencyIsEnabled                 = $False;
+            SignInFrequencyType                      = "";
+            SignInRiskLevels                         = @();
+            State                                    = "enabledForReportingButNotEnforced";
+            TenantId                                 = $OrganizationName;
+            #TransferMethods                          = "";
+            UserRiskLevels                           = @();
+        }
+        AADConditionalAccessPolicy "AADConditionalAccessPolicy-DEV - G - Intune enrollment with strong auth"
+        {
+            ApplicationEnforcedRestrictionsIsEnabled = $False;
+            ApplicationId                            = $ConfigurationData.NonNodeData.ApplicationId;
+            AuthenticationContexts                   = @();
+            AuthenticationStrength                   = "Phishing-resistant MFA";
+            BuiltInControls                          = @();
+            CertificateThumbprint                    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            ClientAppTypes                           = @("all");
+            CloudAppSecurityIsEnabled                = $False;
+            CloudAppSecurityType                     = "";
+            CustomAuthenticationFactors              = @();
+            DeviceFilterRule                         = "";
+            DisplayName                              = "DEV - G - Intune enrollment with strong auth";
+            Ensure                                   = "Present";
+            ExcludeApplications                      = @();
+            ExcludeExternalTenantsMembers            = @();
+            ExcludeExternalTenantsMembershipKind     = "";
+            ExcludeGroups                            = @($ConditionalExclude);
+            ExcludeLocations                         = @();
+            ExcludePlatforms                         = @();
+            ExcludeRoles                             = @();
+            ExcludeUsers                             = @();
+            GrantControlOperator                     = "OR";
+            Id                                       = "1bee7e84-a1b1-471e-a986-a7e9d25ad06f";
+            IncludeApplications                      = @("d4ebce55-015a-49b5-a083-c84d1797ae8c","0000000a-0000-0000-c000-000000000000");
+            IncludeExternalTenantsMembers            = @();
+            IncludeExternalTenantsMembershipKind     = "";
+            IncludeGroups                            = @();
+            IncludeLocations                         = @();
+            IncludePlatforms                         = @();
+            IncludeRoles                             = @();
+            IncludeUserActions                       = @();
+            IncludeUsers                             = @("All");
+            PersistentBrowserIsEnabled               = $False;
+            PersistentBrowserMode                    = "";
+            SignInFrequencyIsEnabled                 = $False;
+            SignInFrequencyType                      = "";
+            SignInRiskLevels                         = @();
+            State                                    = "enabledForReportingButNotEnforced";
+            TenantId                                 = $OrganizationName;
+            #TransferMethods                          = "";
+            UserRiskLevels                           = @();
+        }
+        AADConditionalAccessPolicy "AADConditionalAccessPolicy-LOC - B - Block access from unapproved countries"
+        {
+            ApplicationEnforcedRestrictionsIsEnabled = $False;
+            ApplicationId                            = $ConfigurationData.NonNodeData.ApplicationId;
+            AuthenticationContexts                   = @();
+            BuiltInControls                          = @("block");
+            CertificateThumbprint                    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            ClientAppTypes                           = @("all");
+            CloudAppSecurityIsEnabled                = $False;
+            CloudAppSecurityType                     = "";
+            CustomAuthenticationFactors              = @();
+            DeviceFilterRule                         = "";
+            DisplayName                              = "LOC - B - Block access from unapproved countries";
+            Ensure                                   = "Present";
+            ExcludeApplications                      = @();
+            ExcludeExternalTenantsMembers            = @();
+            ExcludeExternalTenantsMembershipKind     = "";
+            ExcludeGroups                            = @($ConditionalExclude);
+            ExcludeLocations                         = @("Allowed Countries");
+            ExcludePlatforms                         = @();
+            ExcludeRoles                             = @();
+            ExcludeUsers                             = @();
+            GrantControlOperator                     = "OR";
+            Id                                       = "7d013b46-277b-4a11-9501-355cfa3ea442";
+            IncludeApplications                      = @("All");
+            IncludeExternalTenantsMembers            = @();
+            IncludeExternalTenantsMembershipKind     = "";
+            IncludeGroups                            = @();
+            IncludeLocations                         = @("All");
+            IncludePlatforms                         = @();
+            IncludeRoles                             = @();
+            IncludeUserActions                       = @();
+            IncludeUsers                             = @("All");
+            PersistentBrowserIsEnabled               = $False;
+            PersistentBrowserMode                    = "";
+            SignInFrequencyIsEnabled                 = $False;
+            SignInFrequencyType                      = "";
+            SignInRiskLevels                         = @();
+            State                                    = "enabledForReportingButNotEnforced";
+            TenantId                                 = $OrganizationName;
+            #TransferMethods                          = "";
+            UserRiskLevels                           = @();
+        }
+        AADConditionalAccessPolicy "AADConditionalAccessPolicy-USR - B - Block access via legacy auth"
+        {
+            ApplicationEnforcedRestrictionsIsEnabled = $False;
+            ApplicationId                            = $ConfigurationData.NonNodeData.ApplicationId;
+            AuthenticationContexts                   = @();
+            BuiltInControls                          = @("block");
+            CertificateThumbprint                    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            ClientAppTypes                           = @("exchangeActiveSync","other");
+            CloudAppSecurityIsEnabled                = $False;
+            CloudAppSecurityType                     = "";
+            CustomAuthenticationFactors              = @();
+            DeviceFilterRule                         = "";
+            DisplayName                              = "USR - B - Block access via legacy auth";
+            Ensure                                   = "Present";
+            ExcludeApplications                      = @();
+            ExcludeExternalTenantsMembers            = @();
+            ExcludeExternalTenantsMembershipKind     = "";
+            ExcludeGroups                            = @($ConditionalExclude);
+            ExcludeLocations                         = @();
+            ExcludePlatforms                         = @();
+            ExcludeRoles                             = @();
+            ExcludeUsers                             = @();
+            GrantControlOperator                     = "OR";
+            Id                                       = "7fc1abc5-3887-4499-9da9-c7ecaee96a45";
+            IncludeApplications                      = @("All");
+            IncludeExternalTenantsMembers            = @();
+            IncludeExternalTenantsMembershipKind     = "";
+            IncludeGroups                            = @();
+            IncludeLocations                         = @();
+            IncludePlatforms                         = @();
+            IncludeRoles                             = @();
+            IncludeUserActions                       = @();
+            IncludeUsers                             = @("All");
+            PersistentBrowserIsEnabled               = $False;
+            PersistentBrowserMode                    = "";
+            SignInFrequencyIsEnabled                 = $False;
+            SignInFrequencyType                      = "";
+            SignInRiskLevels                         = @();
+            State                                    = "enabledForReportingButNotEnforced";
+            TenantId                                 = $OrganizationName;
+            #TransferMethods                          = "";
+            UserRiskLevels                           = @();
+        }
+        AADConditionalAccessPolicy "AADConditionalAccessPolicy-USR - G - Require strong auth"
+        {
+            ApplicationEnforcedRestrictionsIsEnabled = $False;
+            ApplicationId                            = $ConfigurationData.NonNodeData.ApplicationId;
+            AuthenticationContexts                   = @();
+            AuthenticationStrength                   = "Phishing-resistant MFA";
+            BuiltInControls                          = @();
+            CertificateThumbprint                    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            ClientAppTypes                           = @("all");
+            CloudAppSecurityIsEnabled                = $False;
+            CloudAppSecurityType                     = "";
+            CustomAuthenticationFactors              = @();
+            DeviceFilterRule                         = "";
+            DisplayName                              = "USR - G - Require strong auth";
+            Ensure                                   = "Present";
+            ExcludeApplications                      = @();
+            ExcludeExternalTenantsMembers            = @();
+            ExcludeExternalTenantsMembershipKind     = "";
+            ExcludeGroups                            = @($ConditionalExclude);
+            ExcludeLocations                         = @();
+            ExcludePlatforms                         = @();
+            ExcludeRoles                             = @();
+            ExcludeUsers                             = @();
+            GrantControlOperator                     = "OR";
+            Id                                       = "b76fb4c4-6af1-4257-9728-9f67ad9ad4d4";
+            IncludeApplications                      = @("All");
+            IncludeExternalTenantsMembers            = @();
+            IncludeExternalTenantsMembershipKind     = "";
+            IncludeGroups                            = @();
+            IncludeLocations                         = @();
+            IncludePlatforms                         = @();
+            IncludeRoles                             = @();
+            IncludeUserActions                       = @();
+            IncludeUsers                             = @("All");
+            PersistentBrowserIsEnabled               = $False;
+            PersistentBrowserMode                    = "";
+            SignInFrequencyIsEnabled                 = $False;
+            SignInFrequencyType                      = "";
+            SignInRiskLevels                         = @();
+            State                                    = "enabledForReportingButNotEnforced";
+            TenantId                                 = $OrganizationName;
+            #TransferMethods                          = "";
+            UserRiskLevels                           = @();
+        }
+        AADConditionalAccessPolicy "AADConditionalAccessPolicy-USR - G - Register security info with strong auth"
+        {
+            ApplicationEnforcedRestrictionsIsEnabled = $False;
+            ApplicationId                            = $ConfigurationData.NonNodeData.ApplicationId;
+            AuthenticationContexts                   = @();
+            AuthenticationStrength                   = "Phishing-resistant MFA and TAP";
+            BuiltInControls                          = @();
+            CertificateThumbprint                    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            ClientAppTypes                           = @("all");
+            CloudAppSecurityIsEnabled                = $False;
+            CloudAppSecurityType                     = "";
+            CustomAuthenticationFactors              = @();
+            DeviceFilterRule                         = "";
+            DisplayName                              = "USR - G - Register security info with strong auth";
+            Ensure                                   = "Present";
+            ExcludeApplications                      = @();
+            ExcludeExternalTenantsMembers            = @();
+            ExcludeExternalTenantsMembershipKind     = "";
+            ExcludeGroups                            = @($ConditionalExclude);
+            ExcludeLocations                         = @();
+            ExcludePlatforms                         = @();
+            ExcludeRoles                             = @();
+            ExcludeUsers                             = @();
+            GrantControlOperator                     = "OR";
+            Id                                       = "e12b1ef0-8d40-4247-ab38-4cc959693a51";
+            IncludeApplications                      = @();
+            IncludeExternalTenantsMembers            = @();
+            IncludeExternalTenantsMembershipKind     = "";
+            IncludeGroups                            = @();
+            IncludeLocations                         = @();
+            IncludePlatforms                         = @();
+            IncludeRoles                             = @();
+            IncludeUserActions                       = @("urn:user:registersecurityinfo");
+            IncludeUsers                             = @("All");
+            PersistentBrowserIsEnabled               = $False;
+            PersistentBrowserMode                    = "";
+            SignInFrequencyIsEnabled                 = $False;
+            SignInFrequencyType                      = "";
+            SignInRiskLevels                         = @();
+            State                                    = "enabledForReportingButNotEnforced";
+            TenantId                                 = $OrganizationName;
+            #TransferMethods                          = "";
+            UserRiskLevels                           = @();
+        }
+        AADConditionalAccessPolicy "AADConditionalAccessPolicy-USR - B - Block high-risk sign-ins"
+        {
+            ApplicationEnforcedRestrictionsIsEnabled = $False;
+            ApplicationId                            = $ConfigurationData.NonNodeData.ApplicationId;
+            AuthenticationContexts                   = @();
+            BuiltInControls                          = @("block");
+            CertificateThumbprint                    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            ClientAppTypes                           = @("all");
+            CloudAppSecurityIsEnabled                = $False;
+            CloudAppSecurityType                     = "";
+            CustomAuthenticationFactors              = @();
+            DeviceFilterRule                         = "";
+            DisplayName                              = "USR - B - Block high-risk sign-ins";
+            Ensure                                   = "Present";
+            ExcludeApplications                      = @();
+            ExcludeExternalTenantsMembers            = @();
+            ExcludeExternalTenantsMembershipKind     = "";
+            ExcludeGroups                            = @($ConditionalExclude);
+            ExcludeLocations                         = @();
+            ExcludePlatforms                         = @();
+            ExcludeRoles                             = @();
+            ExcludeUsers                             = @();
+            GrantControlOperator                     = "OR";
+            Id                                       = "21a568c2-6e83-4812-808e-7c920f9d08b5";
+            IncludeApplications                      = @("All");
+            IncludeExternalTenantsMembers            = @();
+            IncludeExternalTenantsMembershipKind     = "";
+            IncludeGroups                            = @();
+            IncludeLocations                         = @();
+            IncludePlatforms                         = @();
+            IncludeRoles                             = @();
+            IncludeUserActions                       = @();
+            IncludeUsers                             = @("All");
+            PersistentBrowserIsEnabled               = $False;
+            PersistentBrowserMode                    = "";
+            SignInFrequencyIsEnabled                 = $False;
+            SignInFrequencyType                      = "";
+            SignInRiskLevels                         = @("high");
+            State                                    = "enabledForReportingButNotEnforced";
+            TenantId                                 = $OrganizationName;
+            #TransferMethods                          = "";
+            UserRiskLevels                           = @();
+        }
+        AADConditionalAccessPolicy "AADConditionalAccessPolicy-USR - G - Risky sign-ins with strong auth"
+        {
+            ApplicationEnforcedRestrictionsIsEnabled = $False;
+            ApplicationId                            = $ConfigurationData.NonNodeData.ApplicationId;
+            AuthenticationContexts                   = @();
+            AuthenticationStrength                   = "Phishing-resistant MFA";
+            BuiltInControls                          = @();
+            CertificateThumbprint                    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            ClientAppTypes                           = @("all");
+            CloudAppSecurityIsEnabled                = $False;
+            CloudAppSecurityType                     = "";
+            CustomAuthenticationFactors              = @();
+            DeviceFilterRule                         = "";
+            DisplayName                              = "USR - G - Risky sign-ins with strong auth";
+            Ensure                                   = "Present";
+            ExcludeApplications                      = @();
+            ExcludeExternalTenantsMembers            = @();
+            ExcludeExternalTenantsMembershipKind     = "";
+            ExcludeGroups                            = @($ConditionalExclude);
+            ExcludeLocations                         = @();
+            ExcludePlatforms                         = @();
+            ExcludeRoles                             = @();
+            ExcludeUsers                             = @();
+            GrantControlOperator                     = "OR";
+            Id                                       = "35c7c27c-0e9c-4c07-b097-87213184d353";
+            IncludeApplications                      = @("All");
+            IncludeExternalTenantsMembers            = @();
+            IncludeExternalTenantsMembershipKind     = "";
+            IncludeGroups                            = @();
+            IncludeLocations                         = @();
+            IncludePlatforms                         = @();
+            IncludeRoles                             = @();
+            IncludeUserActions                       = @();
+            IncludeUsers                             = @("All");
+            PersistentBrowserIsEnabled               = $False;
+            PersistentBrowserMode                    = "";
+            SignInFrequencyIsEnabled                 = $False;
+            SignInFrequencyType                      = "";
+            SignInRiskLevels                         = @("medium","low");
+            State                                    = "enabledForReportingButNotEnforced";
+            TenantId                                 = $OrganizationName;
+            #TransferMethods                          = "";
+            UserRiskLevels                           = @();
+        }
+        AADConditionalAccessPolicy "AADConditionalAccessPolicy-USR - B - Block high-risk users"
+        {
+            ApplicationEnforcedRestrictionsIsEnabled = $False;
+            ApplicationId                            = $ConfigurationData.NonNodeData.ApplicationId;
+            AuthenticationContexts                   = @();
+            BuiltInControls                          = @("block");
+            CertificateThumbprint                    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            ClientAppTypes                           = @("all");
+            CloudAppSecurityIsEnabled                = $False;
+            CloudAppSecurityType                     = "";
+            CustomAuthenticationFactors              = @();
+            DeviceFilterRule                         = "";
+            DisplayName                              = "USR - B - Block high-risk users";
+            Ensure                                   = "Present";
+            ExcludeApplications                      = @();
+            ExcludeExternalTenantsMembers            = @();
+            ExcludeExternalTenantsMembershipKind     = "";
+            ExcludeGroups                            = @($ConditionalExclude);
+            ExcludeLocations                         = @();
+            ExcludePlatforms                         = @();
+            ExcludeRoles                             = @();
+            ExcludeUsers                             = @();
+            GrantControlOperator                     = "OR";
+            Id                                       = "7e61e860-65a8-4f90-92e7-7821b6cea45b";
+            IncludeApplications                      = @("All");
+            IncludeExternalTenantsMembers            = @();
+            IncludeExternalTenantsMembershipKind     = "";
+            IncludeGroups                            = @();
+            IncludeLocations                         = @();
+            IncludePlatforms                         = @();
+            IncludeRoles                             = @();
+            IncludeUserActions                       = @();
+            IncludeUsers                             = @("All");
+            PersistentBrowserIsEnabled               = $False;
+            PersistentBrowserMode                    = "";
+            SignInFrequencyIsEnabled                 = $False;
+            SignInFrequencyType                      = "";
+            SignInRiskLevels                         = @();
+            State                                    = "enabledForReportingButNotEnforced";
+            TenantId                                 = $OrganizationName;
+            #TransferMethods                          = "";
+            UserRiskLevels                           = @("high");
+        }
+        AADConditionalAccessPolicy "AADConditionalAccessPolicy-USR - B - Block users with elevated insider risk"
+        {
+            ApplicationEnforcedRestrictionsIsEnabled = $False;
+            ApplicationId                            = $ConfigurationData.NonNodeData.ApplicationId;
+            AuthenticationContexts                   = @();
+            BuiltInControls                          = @("block");
+            CertificateThumbprint                    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            ClientAppTypes                           = @("all");
+            CloudAppSecurityIsEnabled                = $False;
+            CloudAppSecurityType                     = "";
+            CustomAuthenticationFactors              = @();
+            DeviceFilterRule                         = "";
+            DisplayName                              = "USR - B - Block users with elevated insider risk";
+            Ensure                                   = "Present";
+            ExcludeApplications                      = @();
+            ExcludeExternalTenantsMembers            = @();
+            ExcludeExternalTenantsMembershipKind     = "";
+            ExcludeGroups                            = @($ConditionalExclude);
+            ExcludeLocations                         = @();
+            ExcludePlatforms                         = @();
+            ExcludeRoles                             = @();
+            ExcludeUsers                             = @();
+            GrantControlOperator                     = "OR";
+            Id                                       = "13ea1582-463a-49a9-967a-124965fa835d";
+            IncludeApplications                      = @("All");
+            IncludeExternalTenantsMembers            = @();
+            IncludeExternalTenantsMembershipKind     = "";
+            IncludeGroups                            = @();
+            IncludeLocations                         = @();
+            IncludePlatforms                         = @();
+            IncludeRoles                             = @();
+            IncludeUserActions                       = @();
+            IncludeUsers                             = @("All");
+            PersistentBrowserIsEnabled               = $False;
+            PersistentBrowserMode                    = "";
+            SignInFrequencyIsEnabled                 = $False;
+            SignInFrequencyType                      = "";
+            SignInRiskLevels                         = @();
+            State                                    = "enabledForReportingButNotEnforced";
+            TenantId                                 = $OrganizationName;
+            #TransferMethods                          = "";
+            UserRiskLevels                           = @();
+        }
+        AADConditionalAccessPolicy "AADConditionalAccessPolicy-USR - S - Limit user sessions"
+        {
+            ApplicationEnforcedRestrictionsIsEnabled = $False;
+            ApplicationId                            = $ConfigurationData.NonNodeData.ApplicationId;
+            AuthenticationContexts                   = @();
+            BuiltInControls                          = @();
+            CertificateThumbprint                    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            ClientAppTypes                           = @("all");
+            CloudAppSecurityIsEnabled                = $False;
+            CloudAppSecurityType                     = "";
+            CustomAuthenticationFactors              = @();
+            DeviceFilterRule                         = "";
+            DisplayName                              = "USR - S - Limit user sessions";
+            Ensure                                   = "Present";
+            ExcludeApplications                      = @();
+            ExcludeExternalTenantsMembers            = @();
+            ExcludeExternalTenantsMembershipKind     = "";
+            ExcludeGroups                            = @($ConditionalExclude,$PrivUsers);
+            ExcludeLocations                         = @();
+            ExcludePlatforms                         = @();
+            ExcludeRoles                             = @("Application Administrator","Attack Simulation Administrator","Attribute Assignment Administrator","Attribute Definition Administrator","Attribute Log Administrator","Authentication Administrator","Authentication Extensibility Administrator","Authentication Policy Administrator","Azure DevOps Administrator","Azure Information Protection Administrator","B2C IEF Keyset Administrator","B2C IEF Policy Administrator","Billing Administrator","Cloud App Security Administrator","Cloud Application Administrator","Cloud Device Administrator","Compliance Administrator","Compliance Data Administrator","Conditional Access Administrator","Desktop Analytics Administrator","Domain Name Administrator","Dynamics 365 Administrator","Dynamics 365 Business Central Administrator","Edge Administrator","Exchange Administrator","Exchange Recipient Administrator","Extended Directory User Administrator","External ID User Flow Administrator","External ID User Flow Attribute Administrator","External Identity Provider Administrator","Fabric Administrator","Global Administrator","Global Secure Access Administrator","Groups Administrator","Helpdesk Administrator","Hybrid Identity Administrator","Identity Governance Administrator","Insights Administrator","Intune Administrator","Kaizala Administrator","Knowledge Administrator","License Administrator","Lifecycle Workflows Administrator","Microsoft 365 Migration Administrator","Microsoft 365 Backup Administrator","Azure AD Joined Device Local Administrator","Microsoft Hardware Warranty Administrator","Network Administrator","Office Apps Administrator","Organizational Branding Administrator","Password Administrator","Permissions Management Administrator","Power Platform Administrator","Printer Administrator","Privileged Authentication Administrator","Privileged Role Administrator","Search Administrator","Security Administrator","Service Support Administrator","SharePoint Administrator","SharePoint Embedded Administrator","Skype for Business Administrator","Teams Administrator","Teams Communications Administrator","Teams Devices Administrator","Teams Telephony Administrator","User Administrator","Virtual Visits Administrator","Viva Goals Administrator","Viva Pulse Administrator","Windows 365 Administrator","Windows Update Deployment Administrator","Yammer Administrator");
+            ExcludeUsers                             = @();
+            Id                                       = "513fb4c5-9639-4291-a9be-005754126039";
+            IncludeApplications                      = @("All");
+            IncludeExternalTenantsMembers            = @();
+            IncludeExternalTenantsMembershipKind     = "";
+            IncludeGroups                            = @();
+            IncludeLocations                         = @();
+            IncludePlatforms                         = @();
+            IncludeRoles                             = @();
+            IncludeUserActions                       = @();
+            IncludeUsers                             = @("All");
+            PersistentBrowserIsEnabled               = $False;
+            PersistentBrowserMode                    = "";
+            SignInFrequencyInterval                  = "timeBased";
+            SignInFrequencyIsEnabled                 = $True;
+            SignInFrequencyType                      = "hours";
+            SignInFrequencyValue                     = 16;
+            SignInRiskLevels                         = @();
+            State                                    = "enabledForReportingButNotEnforced";
+            TenantId                                 = $OrganizationName;
+            #TransferMethods                          = "";
+            UserRiskLevels                           = @();
+        }
+        AADConditionalAccessPolicy "AADConditionalAccessPolicy-ADM - S - Limit admin sessions"
+        {
+            ApplicationEnforcedRestrictionsIsEnabled = $False;
+            ApplicationId                            = $ConfigurationData.NonNodeData.ApplicationId;
+            AuthenticationContexts                   = @();
+            BuiltInControls                          = @();
+            CertificateThumbprint                    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            ClientAppTypes                           = @("all");
+            CloudAppSecurityIsEnabled                = $False;
+            CloudAppSecurityType                     = "";
+            CustomAuthenticationFactors              = @();
+            DeviceFilterRule                         = "";
+            DisplayName                              = "ADM - S - Limit admin sessions";
+            Ensure                                   = "Present";
+            ExcludeApplications                      = @();
+            ExcludeExternalTenantsMembers            = @();
+            ExcludeExternalTenantsMembershipKind     = "";
+            ExcludeGroups                            = @($ConditionalExclude);
+            ExcludeLocations                         = @();
+            ExcludePlatforms                         = @();
+            ExcludeRoles                             = @();
+            ExcludeUsers                             = @();
+            Id                                       = "0f59ff0d-44c6-4259-ad60-98ac6a50c185";
+            IncludeApplications                      = @("None");
+            IncludeExternalTenantsMembers            = @();
+            IncludeExternalTenantsMembershipKind     = "";
+            IncludeGroups                            = @($PrivUsers);
+            IncludeLocations                         = @();
+            IncludePlatforms                         = @();
+            IncludeRoles                             = @("Application Administrator","Attack Simulation Administrator","Attribute Assignment Administrator","Attribute Definition Administrator","Attribute Log Administrator","Authentication Administrator","Authentication Extensibility Administrator","Authentication Policy Administrator","Azure DevOps Administrator","Azure Information Protection Administrator","B2C IEF Keyset Administrator","B2C IEF Policy Administrator","Billing Administrator","Cloud App Security Administrator","Cloud Application Administrator","Cloud Device Administrator","Compliance Administrator","Compliance Data Administrator","Desktop Analytics Administrator","Conditional Access Administrator","Exchange Administrator","Dynamics 365 Business Central Administrator","Dynamics 365 Administrator","Domain Name Administrator","Edge Administrator","Exchange Recipient Administrator","Extended Directory User Administrator","External ID User Flow Administrator","External ID User Flow Attribute Administrator","External Identity Provider Administrator","Fabric Administrator","Global Administrator","Global Secure Access Administrator","Groups Administrator","Helpdesk Administrator","Hybrid Identity Administrator","Identity Governance Administrator","Insights Administrator","Intune Administrator","Kaizala Administrator","Knowledge Administrator","License Administrator","Lifecycle Workflows Administrator","Microsoft 365 Backup Administrator","Microsoft 365 Migration Administrator","Microsoft Hardware Warranty Administrator","Azure AD Joined Device Local Administrator","Network Administrator","Office Apps Administrator","Organizational Branding Administrator","Permissions Management Administrator","Power Platform Administrator","Printer Administrator","Privileged Authentication Administrator","Privileged Role Administrator","Search Administrator","Security Administrator","Password Administrator","Service Support Administrator","SharePoint Administrator","SharePoint Embedded Administrator","Skype for Business Administrator","Teams Administrator","Teams Communications Administrator","Teams Devices Administrator","Teams Telephony Administrator","User Administrator","Virtual Visits Administrator","Viva Goals Administrator","Viva Pulse Administrator","Windows 365 Administrator","Windows Update Deployment Administrator","Yammer Administrator");
+            IncludeUserActions                       = @();
+            IncludeUsers                             = @();
+            PersistentBrowserIsEnabled               = $False;
+            PersistentBrowserMode                    = "";
+            SignInFrequencyInterval                  = "timeBased";
+            SignInFrequencyIsEnabled                 = $True;
+            SignInFrequencyType                      = "hours";
+            SignInFrequencyValue                     = 4;
+            SignInRiskLevels                         = @();
+            State                                    = "enabledForReportingButNotEnforced";
+            TenantId                                 = $OrganizationName;
+            #TransferMethods                          = "";
+            UserRiskLevels                           = @();
+        }
+        AADConditionalAccessPolicy "AADConditionalAccessPolicy-DEV - G - Compliant devices"
+        {
+            ApplicationEnforcedRestrictionsIsEnabled = $False;
+            ApplicationId                            = $ConfigurationData.NonNodeData.ApplicationId;
+            AuthenticationContexts                   = @();
+            BuiltInControls                          = @("compliantDevice");
+            CertificateThumbprint                    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            ClientAppTypes                           = @("all");
+            CloudAppSecurityIsEnabled                = $False;
+            CloudAppSecurityType                     = "";
+            CustomAuthenticationFactors              = @();
+            DeviceFilterRule                         = "";
+            DisplayName                              = "DEV - G - Compliant devices";
+            Ensure                                   = "Present";
+            ExcludeApplications                      = @();
+            ExcludeExternalTenantsMembers            = @();
+            ExcludeExternalTenantsMembershipKind     = "";
+            ExcludeGroups                            = @($ConditionalExclude);
+            ExcludeLocations                         = @();
+            ExcludePlatforms                         = @();
+            ExcludeRoles                             = @();
+            ExcludeUsers                             = @();
+            GrantControlOperator                     = "OR";
+            Id                                       = "bdfc4e25-146e-4371-812d-d964d5f00d43";
+            IncludeApplications                      = @("None");
+            IncludeExternalTenantsMembers            = @();
+            IncludeExternalTenantsMembershipKind     = "";
+            IncludeGroups                            = @();
+            IncludeLocations                         = @();
+            IncludePlatforms                         = @();
+            IncludeRoles                             = @();
+            IncludeUserActions                       = @();
+            IncludeUsers                             = @("All");
+            PersistentBrowserIsEnabled               = $False;
+            PersistentBrowserMode                    = "";
+            SignInFrequencyIsEnabled                 = $False;
+            SignInFrequencyType                      = "";
+            SignInRiskLevels                         = @();
+            State                                    = "enabledForReportingButNotEnforced";
+            TenantId                                 = $OrganizationName;
+            #TransferMethods                          = "";
+            UserRiskLevels                           = @();
+        }
+        AADConditionalAccessPolicy "AADConditionalAccessPolicy-USR - G - Agreement to terms of use"
+        {
+            ApplicationEnforcedRestrictionsIsEnabled = $False;
+            ApplicationId                            = $ConfigurationData.NonNodeData.ApplicationId;
+            AuthenticationContexts                   = @();
+            BuiltInControls                          = @();
+            CertificateThumbprint                    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            ClientAppTypes                           = @("all");
+            CloudAppSecurityIsEnabled                = $False;
+            CloudAppSecurityType                     = "";
+            CustomAuthenticationFactors              = @();
+            DeviceFilterRule                         = "";
+            DisplayName                              = "USR - G - Agreement to terms of use";
+            Ensure                                   = "Present";
+            ExcludeApplications                      = @();
+            ExcludeExternalTenantsMembers            = @();
+            ExcludeExternalTenantsMembershipKind     = "";
+            ExcludeGroups                            = @($ConditionalExclude);
+            ExcludeLocations                         = @();
+            ExcludePlatforms                         = @();
+            ExcludeRoles                             = @();
+            ExcludeUsers                             = @();
+            GrantControlOperator                     = "OR";
+            Id                                       = "b77698c9-4a93-4876-8a75-24b660e56f41";
+            IncludeApplications                      = @("All");
+            IncludeExternalTenantsMembers            = @();
+            IncludeExternalTenantsMembershipKind     = "";
+            IncludeGroups                            = @();
+            IncludeLocations                         = @();
+            IncludePlatforms                         = @();
+            IncludeRoles                             = @();
+            IncludeUserActions                       = @();
+            IncludeUsers                             = @("All");
+            PersistentBrowserIsEnabled               = $False;
+            PersistentBrowserMode                    = "";
+            SignInFrequencyIsEnabled                 = $False;
+            SignInFrequencyType                      = "";
+            SignInRiskLevels                         = @();
+            State                                    = "enabledForReportingButNotEnforced";
+            TenantId                                 = $OrganizationName;
+            TermsOfUse                               = "Terms";
+            #TransferMethods                          = "";
+            UserRiskLevels                           = @();
+        }
+        AADConditionalAccessPolicy "AADConditionalAccessPolicy-GST - B - Block guests"
+        {
+            ApplicationEnforcedRestrictionsIsEnabled = $False;
+            ApplicationId                            = $ConfigurationData.NonNodeData.ApplicationId;
+            AuthenticationContexts                   = @();
+            BuiltInControls                          = @("block");
+            CertificateThumbprint                    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            ClientAppTypes                           = @("all");
+            CloudAppSecurityIsEnabled                = $False;
+            CloudAppSecurityType                     = "";
+            CustomAuthenticationFactors              = @();
+            DeviceFilterRule                         = "";
+            DisplayName                              = "GST - B - Block guests";
+            Ensure                                   = "Present";
+            ExcludeApplications                      = @();
+            ExcludeExternalTenantsMembers            = @();
+            ExcludeExternalTenantsMembershipKind     = "";
+            ExcludeGroups                            = @($ConditionalExclude);
+            ExcludeLocations                         = @();
+            ExcludePlatforms                         = @();
+            ExcludeRoles                             = @();
+            ExcludeUsers                             = @();
+            GrantControlOperator                     = "OR";
+            Id                                       = "fd7d8a63-5ab0-4bc5-8550-603e6dcc29fa";
+            IncludeApplications                      = @("All");
+            IncludeExternalTenantsMembers            = @();
+            IncludeExternalTenantsMembershipKind     = "all";
+            IncludeGroups                            = @();
+            IncludeGuestOrExternalUserTypes          = @("internalGuest","b2bCollaborationGuest","b2bCollaborationMember","b2bDirectConnectUser","otherExternalUser","serviceProvider");
+            IncludeLocations                         = @();
+            IncludePlatforms                         = @();
+            IncludeRoles                             = @();
+            IncludeUserActions                       = @();
+            IncludeUsers                             = @();
+            PersistentBrowserIsEnabled               = $False;
+            PersistentBrowserMode                    = "";
+            SignInFrequencyIsEnabled                 = $False;
+            SignInFrequencyType                      = "";
+            SignInRiskLevels                         = @();
+            State                                    = "enabledForReportingButNotEnforced";
+            TenantId                                 = $OrganizationName;
+            #TransferMethods                          = "";
+            UserRiskLevels                           = @();
+        }
+        AADConditionalAccessPolicy "AADConditionalAccessPolicy-GST - G - Guest M365 access with strong auth"
+        {
+            ApplicationEnforcedRestrictionsIsEnabled = $False;
+            ApplicationId                            = $ConfigurationData.NonNodeData.ApplicationId;
+            AuthenticationContexts                   = @();
+            AuthenticationStrength                   = "Phishing-resistant MFA";
+            BuiltInControls                          = @();
+            CertificateThumbprint                    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            ClientAppTypes                           = @("all");
+            CloudAppSecurityIsEnabled                = $False;
+            CloudAppSecurityType                     = "";
+            CustomAuthenticationFactors              = @();
+            DeviceFilterRule                         = "";
+            DisplayName                              = "GST - G - Guest M365 access with strong auth";
+            Ensure                                   = "Present";
+            ExcludeApplications                      = @();
+            ExcludeExternalTenantsMembers            = @();
+            ExcludeExternalTenantsMembershipKind     = "";
+            ExcludeGroups                            = @($ConditionalExclude);
+            ExcludeLocations                         = @();
+            ExcludePlatforms                         = @();
+            ExcludeRoles                             = @();
+            ExcludeUsers                             = @();
+            GrantControlOperator                     = "OR";
+            Id                                       = "f476498f-4e82-49a8-9c7f-39f7aae02e86";
+            IncludeApplications                      = @("Office365");
+            IncludeExternalTenantsMembers            = @();
+            IncludeExternalTenantsMembershipKind     = "all";
+            IncludeGroups                            = @();
+            IncludeGuestOrExternalUserTypes          = @("internalGuest","b2bCollaborationGuest","b2bCollaborationMember","b2bDirectConnectUser","otherExternalUser","serviceProvider");
+            IncludeLocations                         = @();
+            IncludePlatforms                         = @();
+            IncludeRoles                             = @();
+            IncludeUserActions                       = @();
+            IncludeUsers                             = @();
+            PersistentBrowserIsEnabled               = $False;
+            PersistentBrowserMode                    = "";
+            SignInFrequencyIsEnabled                 = $False;
+            SignInFrequencyType                      = "";
+            SignInRiskLevels                         = @();
+            State                                    = "enabledForReportingButNotEnforced";
+            TenantId                                 = $OrganizationName;
+            #TransferMethods                          = "";
+            UserRiskLevels                           = @();
+        }
+        AADCrossTenantAccessPolicyConfigurationDefault "AADCrossTenantAccessPolicyConfigurationDefault"
+        {
+            ApplicationId            = $ConfigurationData.NonNodeData.ApplicationId;
+            B2BCollaborationInbound  = MSFT_AADCrossTenantAccessPolicyB2BSetting {
+                Applications = MSFT_AADCrossTenantAccessPolicyTargetConfiguration{
+                    AccessType = 'allowed'
+                    Targets    = @(
+                        MSFT_AADCrossTenantAccessPolicyTarget{
+                            Target     = 'AllApplications'
+                            TargetType = 'application'
+                        }
+                    )
+                }
+                UsersAndGroups = MSFT_AADCrossTenantAccessPolicyTargetConfiguration{
+                    AccessType = 'allowed'
+                    Targets    = @(
+                        MSFT_AADCrossTenantAccessPolicyTarget{
+                            Target     = 'AllUsers'
+                            TargetType = 'user'
+                        }
+                    )
+                }
+            };
+            B2BCollaborationOutbound = MSFT_AADCrossTenantAccessPolicyB2BSetting {
+                Applications = MSFT_AADCrossTenantAccessPolicyTargetConfiguration{
+                    AccessType = 'allowed'
+                    Targets    = @(
+                        MSFT_AADCrossTenantAccessPolicyTarget{
+                            Target     = 'AllApplications'
+                            TargetType = 'application'
+                        }
+                    )
+                }
+                UsersAndGroups = MSFT_AADCrossTenantAccessPolicyTargetConfiguration{
+                    AccessType = 'allowed'
+                    Targets    = @(
+                        MSFT_AADCrossTenantAccessPolicyTarget{
+                            Target     = 'AllUsers'
+                            TargetType = 'user'
+                        }
+                    )
+                }
+            };
+            B2BDirectConnectInbound  = MSFT_AADCrossTenantAccessPolicyB2BSetting {
+                Applications = MSFT_AADCrossTenantAccessPolicyTargetConfiguration{
+                    AccessType = 'blocked'
+                    Targets    = @(
+                        MSFT_AADCrossTenantAccessPolicyTarget{
+                            Target     = 'AllApplications'
+                            TargetType = 'application'
+                        }
+                    )
+                }
+                UsersAndGroups = MSFT_AADCrossTenantAccessPolicyTargetConfiguration{
+                    AccessType = 'blocked'
+                    Targets    = @(
+                        MSFT_AADCrossTenantAccessPolicyTarget{
+                            Target     = 'AllUsers'
+                            TargetType = 'user'
+                        }
+                    )
+                }
+            };
+            B2BDirectConnectOutbound = MSFT_AADCrossTenantAccessPolicyB2BSetting {
+                Applications = MSFT_AADCrossTenantAccessPolicyTargetConfiguration{
+                    AccessType = 'blocked'
+                    Targets    = @(
+                        MSFT_AADCrossTenantAccessPolicyTarget{
+                            Target     = 'AllApplications'
+                            TargetType = 'application'
+                        }
+                    )
+                }
+                UsersAndGroups = MSFT_AADCrossTenantAccessPolicyTargetConfiguration{
+                    AccessType = 'blocked'
+                    Targets    = @(
+                        MSFT_AADCrossTenantAccessPolicyTarget{
+                            Target     = 'AllUsers'
+                            TargetType = 'user'
+                        }
+                    )
+                }
+            };
+            CertificateThumbprint    = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            Ensure                   = "Present";
+            InboundTrust             = MSFT_AADCrossTenantAccessPolicyInboundTrust {
+                IsCompliantDeviceAccepted           = $False
+                IsHybridAzureADJoinedDeviceAccepted = $False
+                IsMfaAccepted                       = $False
+            };
+            IsSingleInstance         = "Yes";
+            TenantId                 = $OrganizationName;
+        }
+        AADExternalIdentityPolicy "AADExternalIdentityPolicy"
+        {
+            AllowDeletedIdentitiesDataRemoval = $False;
+            AllowExternalIdentitiesToLeave    = $True;
+            ApplicationId                     = $ConfigurationData.NonNodeData.ApplicationId;
+            CertificateThumbprint             = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            IsSingleInstance                  = "Yes";
+            TenantId                          = $OrganizationName;
+        }
+        AADGroupLifecyclePolicy "AADGroupLifecyclePolicy"
+        {
+            AlternateNotificationEmails = @("Office365_Group_Expiration@agency.gov.au");
+            ApplicationId               = $ConfigurationData.NonNodeData.ApplicationId;
+            CertificateThumbprint       = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            Ensure                      = "Present";
+            GroupLifetimeInDays         = 180;
+            IsSingleInstance            = "Yes";
+            ManagedGroupTypes           = "All";
+            TenantId                    = $OrganizationName;
+        }
+        AADNamedLocationPolicy "AADNamedLocationPolicy-Allowed Countries"
+        {
+            ApplicationId                     = $ConfigurationData.NonNodeData.ApplicationId;
+            CertificateThumbprint             = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            CountriesAndRegions               = @("AU");
+            CountryLookupMethod               = "clientIpAddress";
+            DisplayName                       = "Allowed Countries";
+            Ensure                            = "Present";
+            Id                                = "1f663ad7-2b7d-4534-850f-66b20f6e5c0d";
+            IncludeUnknownCountriesAndRegions = $False;
+            OdataType                         = "#microsoft.graph.countryNamedLocation";
+            TenantId                          = $OrganizationName;
+        }
+        AADNamedLocationPolicy "AADNamedLocationPolicy-Trusted IPs"
+        {
+            ApplicationId         = $ConfigurationData.NonNodeData.ApplicationId;
+            CertificateThumbprint = $ConfigurationData.NonNodeData.CertificateThumbprint;
+            DisplayName           = "Trusted IPs";
+            Ensure                = "Present";
+            Id                    = "01bab898-3dac-4feb-8d8f-7308829fb9dd";
+            IpRanges              = "1.1.1.1/32";
+            IsTrusted             = $True;
+            OdataType             = "#microsoft.graph.ipNamedLocation";
+            TenantId              = $OrganizationName;
+        }
+    }
+}
+
+M365TenantConfig -ConfigurationData .\ConfigurationData.psd1 -ConditionalExclude $ConditionalExclude -PrivUsers $PrivUsers -TermsOfUse $TermsOfUse
